@@ -32,4 +32,21 @@ public class JwtUtil {
             return false;
         }
     }
+    
+    public SecretKey getSecretKey() {
+        return SECRET_KEY;
+    }
+    
+    public String extractSubject(String token) {
+        try {
+            return Jwts.parser()
+                    .verifyWith(SECRET_KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }
