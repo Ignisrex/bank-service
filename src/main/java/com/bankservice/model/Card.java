@@ -13,9 +13,15 @@ public class Card {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String number;
-    private Long holderId;
-    private LocalDate expirationDate;
+    
+    private String cardNumber;
+    private String cardType; // DEBIT, CREDIT
     private String cvv;
-    private boolean active;
+    private String pin;
+    private boolean isActive;
+    private LocalDate expirationDate;
+    
+    @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
 }
