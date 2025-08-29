@@ -1,9 +1,11 @@
 # AI Usage Report - Banking REST Service Development
 
 ## Overview
+
 This document tracks the AI-driven development process for the banking REST service project, demonstrating effective use of AI tools to accelerate development while maintaining code quality and best practices.
 
 ## AI Tools Used
+
 - **Primary Tool**: GitHub Copilot (VS Code Extension)
 - **Development Environment**: VS Code with AI assistance
 - **Approach**: Structured prompt engineering with iterative refinement
@@ -13,6 +15,7 @@ This document tracks the AI-driven development process for the banking REST serv
 ### Phase 1: Project Initialization and Architecture (Completed)
 
 #### Initial Structured Prompt
+
 ```
 Create a minimal Java Spring Boot banking REST service using SQLite with the following specifications:
 
@@ -47,6 +50,7 @@ OUTPUT FORMAT:
 #### Iterative Refinement Prompts
 
 **Database Configuration Optimization**:
+
 ```
 ISSUE: SQLite compatibility with Hibernate 6
 CONTEXT: Custom SQLiteDialect causing compilation errors
@@ -55,6 +59,7 @@ EXPECTED OUTCOME: Clean compilation and successful schema generation
 ```
 
 **Entity Relationship Refinement**:
+
 ```
 PROBLEM: "transaction" is a reserved word in SQLite
 CONTEXT: JPA entity mapping failure
@@ -65,9 +70,10 @@ STRUCTURED FIX:
 ```
 
 **Docker Deployment Troubleshooting**:
+
 ```
 DEPLOYMENT ISSUE: Maven build failures in Docker container
-DEBUG CONTEXT: 
+DEBUG CONTEXT:
 - Local builds successful
 - Docker environment differences
 RESOLUTION REQUEST:
@@ -79,6 +85,7 @@ RESOLUTION REQUEST:
 ### Phase 2: Implementation Strategy (In Progress)
 
 #### Structured Endpoint Development Prompt
+
 ```
 NEXT PHASE: Complete REST API implementation based on Phase 1 foundation
 
@@ -106,28 +113,36 @@ TESTING REQUIREMENTS:
 ## AI-Assisted Problem Solving Examples
 
 ### 1. SQLite Reserved Word Conflict
+
 **Challenge**: Entity named "Transaction" conflicted with SQLite reserved word
-**AI Prompt**: 
+**AI Prompt**:
+
 ```
 Analyze SQLite reserved words conflict with JPA entity naming.
 Provide solution that maintains clean code while avoiding database conflicts.
 ```
+
 **Solution**: Used `@Table(name = "bank_transaction")` annotation
 **Outcome**: Clean entity naming with database compatibility
 
 ### 2. Hibernate 6 Dialect Issues
+
 **Challenge**: Custom SQLiteDialect causing compilation errors
-**AI Guidance**: 
+**AI Guidance**:
+
 ```
 Research Hibernate 6 SQLite dialect options.
 Recommend modern approach replacing custom dialect implementation.
 ```
+
 **Resolution**: Switched to `org.hibernate.community.dialect.SQLiteDialect`
 **Result**: Successful schema generation and application startup
 
 ### 3. Docker Containerization
+
 **Challenge**: Maven build process in Docker environment
 **Structured Approach**:
+
 ```
 Design multi-stage Dockerfile for Spring Boot application:
 1. Maven build stage with dependency resolution
@@ -135,21 +150,25 @@ Design multi-stage Dockerfile for Spring Boot application:
 3. Proper file copying and permissions
 4. Health check implementation
 ```
+
 **Achievement**: Successful containerized deployment
 
 ## Prompt Engineering Techniques Used
 
 ### 1. Contextual Problem Framing
+
 - Always provided current state and desired outcome
 - Included relevant error messages and logs
 - Specified technical constraints and requirements
 
 ### 2. Structured Solution Requests
+
 - Broke complex problems into discrete steps
 - Requested specific code patterns and implementations
 - Asked for explanations of design decisions
 
 ### 3. Iterative Refinement
+
 - Started with broad architectural guidance
 - Refined specific implementation details
 - Validated solutions before moving to next component
@@ -172,16 +191,19 @@ Design multi-stage Dockerfile for Spring Boot application:
 ## Challenges and AI Solutions
 
 ### Challenge 1: Database Schema Generation
+
 **Issue**: Initial schema creation with complex relationships
 **AI Solution**: Provided proper JPA annotations and relationship mappings
 **Result**: Clean database schema with foreign key constraints
 
 ### Challenge 2: Security Configuration
+
 **Issue**: JWT implementation complexity
 **AI Solution**: Generated complete security configuration with token handling
 **Result**: Working authentication framework ready for endpoint protection
 
 ### Challenge 3: Development Environment Setup
+
 **Issue**: Docker compose configuration for development workflow
 **AI Solution**: Created development-friendly compose setup with volume mounting
 **Result**: Seamless local development with containerized database
@@ -189,12 +211,14 @@ Design multi-stage Dockerfile for Spring Boot application:
 ## Productivity Metrics
 
 ### Time Savings
+
 - **Project Setup**: 90% reduction (30 minutes → 3 minutes)
 - **Entity Modeling**: 80% reduction (45 minutes → 9 minutes)
 - **Docker Configuration**: 85% reduction (20 minutes → 3 minutes)
 - **Problem Resolution**: 75% reduction (debugging time significantly reduced)
 
 ### Code Quality
+
 - **Consistency**: AI-generated code follows Spring Boot best practices
 - **Completeness**: Comprehensive implementation with proper annotations
 - **Maintainability**: Clean package structure and separation of concerns
