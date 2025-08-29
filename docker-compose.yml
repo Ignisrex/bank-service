@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  bank-service:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:sqlite:/app/data/bank.db
+    depends_on:
+      - db-init
+
+  db-init:
+    image: alpine:latest
+    command: sh -c "mkdir -p /data && touch /data/bank.db"
+    volumes:
+      - ./data:/data
