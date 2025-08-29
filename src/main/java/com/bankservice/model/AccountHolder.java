@@ -1,5 +1,6 @@
 package com.bankservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = "accounts")
+@EqualsAndHashCode(exclude = "accounts")
 public class AccountHolder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +22,10 @@ public class AccountHolder {
     @Column(unique = true)
     private String email;
     
+    @JsonIgnore
     private String password;
     
     @OneToMany(mappedBy = "holder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Account> accounts;
 }

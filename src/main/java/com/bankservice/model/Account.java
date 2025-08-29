@@ -1,5 +1,6 @@
 package com.bankservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString(exclude = {"transactionList", "holder"})
+@EqualsAndHashCode(exclude = {"transactionList", "holder"})
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +21,11 @@ public class Account {
     private boolean primaryFlag;
     private double balance;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Transaction> transactionList;
     @ManyToOne
     @JoinColumn(name = "holder_id")
+    @JsonIgnore
     private AccountHolder holder;
     @OneToOne(cascade = CascadeType.ALL)
     private Card card;
