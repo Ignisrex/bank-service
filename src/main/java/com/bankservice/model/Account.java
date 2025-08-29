@@ -16,7 +16,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String type; // CREDIT/DEBIT
+    private String type; // CREDIT/DEBIT totdo: Make this an enum
     private String number;
     private boolean primaryFlag;
     private double balance;

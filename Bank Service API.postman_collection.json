@@ -1,0 +1,671 @@
+{
+  "info": {
+    "_postman_id": "bank-service-collection-001",
+    "name": "Bank Service API",
+    "description": "Comprehensive banking REST service collection with JWT authentication. This collection automatically manages JWT tokens by capturing them from login responses and applying them to protected endpoints.\n\nTo get started:\n1. Update the collection variables with your server details\n2. Run the 'Login' request to authenticate\n3. The JWT token will be automatically captured and used for subsequent requests\n\n| Variable | Default Value | Definition |\n| --- | --- | --- |\n| baseUrl | http://localhost:8080 | The base URL for the banking service |\n| authToken | | JWT token automatically captured from login response |\n| userId | | User ID automatically captured from login response |",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "bank-service"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "User Signup",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Capture response if successful",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    ",
+                  "    // Store token and user info",
+                  "    if (responseJson.token) {",
+                  "        pm.collectionVariables.set('authToken', responseJson.token);",
+                  "        console.log('JWT token captured and stored');",
+                  "    }",
+                  "    ",
+                  "    if (responseJson.user && responseJson.user.id) {",
+                  "        pm.collectionVariables.set('userId', responseJson.user.id);",
+                  "        console.log('User ID captured: ' + responseJson.user.id);",
+                  "    }",
+                  "}",
+                  "",
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains token', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('token');",
+                  "});",
+                  "",
+                  "pm.test('Response contains user info', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('user');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"{{userName}}\",\n    \"email\": \"{{userEmail}}\",\n    \"password\": \"{{userPassword}}\",\n    \"accounts\": [\n        {\n            \"type\": \"CHECKING\",\n            \"primaryFlag\": true,\n            \"balance\": 1000.0\n        }\n    ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/signup",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "signup"]
+            },
+            "description": "Register a new user with bank accounts. The JWT token will be automatically captured and stored for use in subsequent requests."
+          }
+        },
+        {
+          "name": "User Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Capture response if successful",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    ",
+                  "    // Store token and user info",
+                  "    if (responseJson.token) {",
+                  "        const oldToken = pm.collectionVariables.get('authToken');",
+                  "        pm.collectionVariables.set('authToken', responseJson.token);",
+                  "        console.log('JWT token updated: ' + responseJson.token.substring(0, 20) + '...');",
+                  "    }",
+                  "    ",
+                  "    if (responseJson.user && responseJson.user.id) {",
+                  "        pm.collectionVariables.set('userId', responseJson.user.id);",
+                  "        console.log('User ID captured: ' + responseJson.user.id);",
+                  "    }",
+                  "}",
+                  "",
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains token', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('token');",
+                  "});",
+                  "",
+                  "pm.test('Response contains user info', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('user');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"{{userEmail}}\",\n    \"password\": \"{{userPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "Authenticate user and receive JWT token. The token will be automatically captured and stored for subsequent requests."
+          }
+        },
+        {
+          "name": "Card Validation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Capture response if successful",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    ",
+                  "    // Store temporary card token",
+                  "    if (responseJson.token) {",
+                  "        pm.collectionVariables.set('cardToken', responseJson.token);",
+                  "        console.log('Card validation token captured');",
+                  "    }",
+                  "}",
+                  "",
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains token', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('token');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"cardNumber\": \"{{cardNumber}}\",\n    \"cvv\": \"{{cardCvv}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/card/validate",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "card", "validate"]
+            },
+            "description": "Validate a card and receive a temporary JWT token for card-based operations."
+          }
+        }
+      ],
+      "description": "Authentication endpoints for user registration, login, and card validation."
+    },
+    {
+      "name": "Account Management",
+      "item": [
+        {
+          "name": "Get User Accounts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array or object', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.satisfy(function(response) {",
+                  "        return Array.isArray(response) || typeof response === 'object';",
+                  "    });",
+                  "});",
+                  "",
+                  "// Store first account ID for other requests",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (Array.isArray(responseJson) && responseJson.length > 0) {",
+                  "        pm.collectionVariables.set('accountId', responseJson[0].id);",
+                  "    } else if (responseJson.id) {",
+                  "        pm.collectionVariables.set('accountId', responseJson.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts"]
+            },
+            "description": "Retrieve all accounts for the authenticated user."
+          }
+        },
+        {
+          "name": "Create New Account",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains account info', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('id');",
+                  "    pm.expect(responseJson).to.have.property('type');",
+                  "    pm.expect(responseJson).to.have.property('balance');",
+                  "});",
+                  "",
+                  "// Store new account ID",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.id) {",
+                  "        pm.collectionVariables.set('newAccountId', responseJson.id);",
+                  "        console.log('New account ID stored: ' + responseJson.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"type\": \"{{accountType}}\",\n    \"primaryFlag\": false,\n    \"balance\": {{initialBalance}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts"]
+            },
+            "description": "Create a new account for the authenticated user."
+          }
+        }
+      ],
+      "description": "Account management endpoints for retrieving and creating bank accounts."
+    },
+    {
+      "name": "Banking Operations",
+      "item": [
+        {
+          "name": "Transfer Money",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains transaction info', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.have.property('transaction');",
+                  "    pm.expect(responseJson).to.have.property('message');",
+                  "});",
+                  "",
+                  "pm.test('Transaction has required fields', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.transaction).to.have.property('id');",
+                  "    pm.expect(responseJson.transaction).to.have.property('amount');",
+                  "    pm.expect(responseJson.transaction).to.have.property('timestamp');",
+                  "});",
+                  "",
+                  "// Store transaction ID",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (responseJson.transaction && responseJson.transaction.id) {",
+                  "        pm.collectionVariables.set('lastTransactionId', responseJson.transaction.id);",
+                  "        console.log('Transaction ID stored: ' + responseJson.transaction.id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"fromAccountId\": {{fromAccountId}},\n    \"toAccountId\": {{toAccountId}},\n    \"amount\": {{transferAmount}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/transfer",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "transfer"]
+            },
+            "description": "Transfer money between accounts. Both accounts must belong to the authenticated user."
+          }
+        }
+      ],
+      "description": "Banking operation endpoints for money transfers and transactions."
+    },
+    {
+      "name": "Card Management",
+      "item": [
+        {
+          "name": "Get Account Cards",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "});",
+                  "",
+                  "// Store first card ID if available",
+                  "if (pm.response.code === 200) {",
+                  "    const responseJson = pm.response.json();",
+                  "    if (Array.isArray(responseJson) && responseJson.length > 0) {",
+                  "        pm.collectionVariables.set('cardId', responseJson[0].id);",
+                  "        console.log('Card ID stored: ' + responseJson[0].id);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/{{accountId}}/cards",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "{{accountId}}", "cards"]
+            },
+            "description": "Get all cards associated with a specific account."
+          }
+        }
+      ],
+      "description": "Card management endpoints for retrieving card information."
+    },
+    {
+      "name": "Account Statements",
+      "item": [
+        {
+          "name": "Get Account Statements",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson).to.be.an('array');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/accounts/{{accountId}}/statements",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "accounts", "{{accountId}}", "statements"]
+            },
+            "description": "Get transaction history/statements for a specific account."
+          }
+        }
+      ],
+      "description": "Account statement endpoints for retrieving transaction history."
+    },
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "// Test assertions",
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Service is UP', function () {",
+                  "    const responseJson = pm.response.json();",
+                  "    pm.expect(responseJson.status).to.eql('UP');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actuator/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["actuator", "health"]
+            },
+            "description": "Check the health status of the banking service."
+          }
+        }
+      ],
+      "description": "Health monitoring and service status endpoints."
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Pre-request script to ensure we have a valid token for protected endpoints",
+          "const authToken = pm.collectionVariables.get('authToken');",
+          "if (!authToken && pm.info.requestName !== 'User Login' && pm.info.requestName !== 'User Signup' && pm.info.requestName !== 'Card Validation' && pm.info.requestName !== 'Health Check') {",
+          "    console.warn('No auth token found. Please run the Login request first.');",
+          "}"
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Global test script",
+          "if (pm.response.code === 401) {",
+          "    console.error('Authentication failed. Token may be expired. Please login again.');",
+          "}",
+          "",
+          "if (pm.response.code === 403) {",
+          "    console.error('Access forbidden. Check if you have the required permissions.');",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string",
+      "description": "Base URL for the banking service"
+    },
+    {
+      "key": "authToken",
+      "value": "",
+      "type": "string",
+      "description": "JWT authentication token (automatically captured from login)"
+    },
+    {
+      "key": "userId",
+      "value": "",
+      "type": "string",
+      "description": "User ID (automatically captured from login)"
+    },
+    {
+      "key": "accountId",
+      "value": "1",
+      "type": "string",
+      "description": "Account ID for account-specific operations"
+    },
+    {
+      "key": "newAccountId",
+      "value": "",
+      "type": "string",
+      "description": "Newly created account ID"
+    },
+    {
+      "key": "cardToken",
+      "value": "",
+      "type": "string",
+      "description": "Card validation token"
+    },
+    {
+      "key": "cardId",
+      "value": "",
+      "type": "string",
+      "description": "Card ID for card operations"
+    },
+    {
+      "key": "lastTransactionId",
+      "value": "",
+      "type": "string",
+      "description": "Last transaction ID"
+    },
+    {
+      "key": "userName",
+      "value": "Test User",
+      "type": "string",
+      "description": "User name for signup"
+    },
+    {
+      "key": "userEmail",
+      "value": "test@example.com",
+      "type": "string",
+      "description": "User email for authentication"
+    },
+    {
+      "key": "userPassword",
+      "value": "password123",
+      "type": "string",
+      "description": "User password for authentication"
+    },
+    {
+      "key": "cardNumber",
+      "value": "1234567890123456",
+      "type": "string",
+      "description": "Card number for validation"
+    },
+    {
+      "key": "cardCvv",
+      "value": "123",
+      "type": "string",
+      "description": "Card CVV for validation"
+    },
+    {
+      "key": "accountType",
+      "value": "SAVINGS",
+      "type": "string",
+      "description": "Account type for new account creation (CHECKING, SAVINGS)"
+    },
+    {
+      "key": "initialBalance",
+      "value": "2000.0",
+      "type": "string",
+      "description": "Initial balance for new account"
+    },
+    {
+      "key": "fromAccountId",
+      "value": "1",
+      "type": "string",
+      "description": "Source account ID for transfers"
+    },
+    {
+      "key": "toAccountId",
+      "value": "1",
+      "type": "string",
+      "description": "Destination account ID for transfers"
+    },
+    {
+      "key": "transferAmount",
+      "value": "100.0",
+      "type": "string",
+      "description": "Amount to transfer"
+    }
+  ]
+}

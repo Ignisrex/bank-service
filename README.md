@@ -134,6 +134,25 @@ docker compose up --build -d
 
 ## 🧪 Testing the API
 
+### 📮 Postman Collection (Recommended)
+
+For easy manual testing, import the `Bank Service API.postman_collection.json` file into Postman. This comprehensive collection includes:
+
+- ✅ **All API endpoints** with pre-configured requests
+- ✅ **Automatic JWT token management** - tokens are captured and applied automatically
+- ✅ **Test scripts** for response validation
+- ✅ **Environment variables** for easy configuration
+- ✅ **Ready-to-use examples** with sample data
+
+**Quick Start with Postman:**
+1. Import `Bank Service API.postman_collection.json` into Postman
+2. Update the `baseUrl` variable to `http://localhost:8080` (already set by default)
+3. Run the "User Signup" or "User Login" request to authenticate
+4. JWT token will be automatically captured for subsequent requests
+5. Test all endpoints with proper authentication
+
+### 🔧 Manual Testing with cURL
+
 ### 1. User Registration
 
 ```bash
