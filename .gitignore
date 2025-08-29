@@ -1,0 +1,19 @@
+# Build directories
+target/
+.mvn/
+
+# Database files
+data/
+*.db
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
