@@ -19,13 +19,9 @@ public class Account {
     private double balance;
     @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
     private List<Transaction> transactionList;
-    @ManyToMany
-    @JoinTable(
-        name = "account_holder_account",
-        joinColumns = @JoinColumn(name = "account_id"),
-        inverseJoinColumns = @JoinColumn(name = "holder_id")
-    )
-    private List<AccountHolder> holderList;
+    @ManyToOne
+    @JoinColumn(name = "holder_id")
+    private AccountHolder holder;
     @OneToOne(cascade = CascadeType.ALL)
     private Card card;
 }

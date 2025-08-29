@@ -24,9 +24,10 @@ public class AccountService {
         for (AccountDTO dto : request.getAccounts()) {
             Account acc = Account.builder()
                 .type(dto.getType())
+                .number("ACC" + System.currentTimeMillis()) // Generate account number
                 .primaryFlag(dto.isPrimaryFlag())
                 .balance(dto.getBalance())
-                .holderList(List.of(holder))
+                .holder(holder)
                 .build();
             accounts.add(acc);
         }

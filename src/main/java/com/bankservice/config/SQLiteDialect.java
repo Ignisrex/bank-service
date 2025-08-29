@@ -1,23 +1,8 @@
 package com.bankservice.config;
 
 import org.hibernate.dialect.Dialect;
-import org.hibernate.dialect.identity.IdentityColumnSupportImpl;
-import org.hibernate.dialect.identity.IdentityColumnSupport;
-import java.sql.Types;
+import org.hibernate.dialect.SQLiteDialect;
 
-public class SQLiteDialect extends Dialect {
-    public SQLiteDialect() {
-        super();
-        registerColumnType(Types.INTEGER, "integer");
-        registerColumnType(Types.VARCHAR, "varchar");
-        registerColumnType(Types.BLOB, "blob");
-    }
-    @Override
-    public IdentityColumnSupport getIdentityColumnSupport() {
-        return new IdentityColumnSupportImpl();
-    }
-    @Override
-    public boolean supportsIdentityColumns() {
-        return true;
-    }
+// Use the built-in SQLiteDialect from Hibernate 6
+public class SQLiteDialect extends org.hibernate.dialect.SQLiteDialect {
 }

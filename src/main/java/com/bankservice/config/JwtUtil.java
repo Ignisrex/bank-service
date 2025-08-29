@@ -1,22 +1,35 @@
 package com.bankservice.config;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 import java.util.Date;
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtUtil {
-    private final String SECRET_KEY = "secret";
+    private final SecretKey SECRET_KEY = Keys.hmacShaKeyFor("mysecretkeymysecretkeymysecretkey".getBytes());
+    
     public String generateToken(String subject) {
         return Jwts.builder()
-                .setSubject(subject)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 min
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .subject(subject)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 10)) // 10 min
+                .signWith(SECRET_KEY)
                 .compact();
     }
+    
     public boolean validateToken(String token, String subject) {
-        return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody().getSubject().equals(subject);
+        try {
+            String tokenSubject = Jwts.parser()
+                    .verifyWith(SECRET_KEY)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload()
+                    .getSubject();
+            return tokenSubject.equals(subject);
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
